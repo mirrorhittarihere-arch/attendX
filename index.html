@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10162b">
+  <title>AttendX - Smart Attendance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body data-page="login">
+<section class="login-screen" id="loginScreen">
+  <div class="login-card login-card-simple">
+    <div class="login-brand">
+      <span class="brand-mark"><i data-lucide="scan-face"></i></span>
+      <div><b>Attend<span class="brand-x">X</span></b><small>Smart QR attendance system</small></div>
+    </div>
+
+    <div class="login-copy" id="loginIntro">
+      <div class="eyebrow">WELCOME TO ATTENDX</div>
+      <h1 id="loginTitle">Choose your login</h1>
+      <p id="loginDescription">Select your portal to continue to AttendX.</p>
+    </div>
+
+    <div class="role-choice-grid" id="loginChoice">
+      <button class="role-choice-card" id="chooseTeacherLogin" type="button">
+        <span class="role-choice-icon teacher-role-icon"><i data-lucide="shield-check"></i></span>
+        <span class="role-choice-title">Teacher Login</span>
+        <span class="role-choice-description">Manage classes, QR sessions and attendance reports.</span>
+        <span class="role-choice-action">Continue as teacher <i data-lucide="arrow-right"></i></span>
+      </button>
+      <button class="role-choice-card student-role-card" id="chooseStudentLogin" type="button">
+        <span class="role-choice-icon student-role-icon"><i data-lucide="graduation-cap"></i></span>
+        <span class="role-choice-title">Student Login</span>
+        <span class="role-choice-description">Scan attendance QR and view your attendance history.</span>
+        <span class="role-choice-action">Continue as student <i data-lucide="arrow-right"></i></span>
+      </button>
+    </div>
+
+    <div class="login-grid hidden" id="loginForms">
+      <form class="login-box hidden" id="teacherLoginForm">
+        <button class="login-back" type="button" data-login-back><i data-lucide="arrow-left"></i> Back to login options</button>
+        <span class="login-icon"><i data-lucide="shield-check"></i></span>
+        <h2>Teacher Login</h2>
+        <p>Enter your teacher credentials to manage attendance.</p>
+        <p class="demo-credential">Use the teacher email and password created in Firebase Authentication.</p>
+        <label>Email address<input id="teacherEmail" type="email" required autocomplete="username" placeholder="teacher@example.com"></label>
+        <label>Password<input id="teacherPassword" type="password" required autocomplete="current-password" placeholder="Enter your password"></label>
+        <button class="btn btn-primary btn-full" type="submit"><i data-lucide="log-in"></i> Login as teacher</button>
+      </form>
+      <form class="login-box accent hidden" id="studentLoginForm">
+        <button class="login-back" type="button" data-login-back><i data-lucide="arrow-left"></i> Back to login options</button>
+        <span class="login-icon"><i data-lucide="graduation-cap"></i></span>
+        <h2>Student Login</h2>
+        <p>Sign in with your registered student account.</p>
+        <p class="demo-credential">Use the email and password registered by your administrator.</p>
+        <label>Email address<input id="studentEmail" type="email" required autocomplete="username" placeholder="student@example.com"></label>
+        <label>Password<input id="studentPassword" type="password" required autocomplete="current-password" placeholder="Enter your password"></label>
+        <button class="btn btn-primary btn-full" type="submit"><i data-lucide="log-in"></i> Login as student</button>
+      </form>
+    </div>
+    <div class="login-footnote"><i data-lucide="shield-check"></i> Teacher and student portals have separate access.</div>
+  </div>
+</section>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

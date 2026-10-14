@@ -1,0 +1,41 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isTeacher() {
+      return signedIn() && userDoc().data.role == 'teacher';
+    }
+
+    function isStudent(uid) {
+      return signedIn() && request.auth.uid == uid && userDoc().data.role == 'student';
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isTeacher());
+      allow create, update, delete: if isTeacher();
+    }
+
+    match /sessions/{sessionId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isTeacher();
+
+      match /attendance/{uid} {
+        allow read: if isTeacher() || isStudent(uid);
+        allow create: if isStudent(uid)
+          && !exists(/databases/$(database)/documents/sessions/$(sessionId)/attendance/$(uid))
+          && get(/databases/$(database)/documents/sessions/$(sessionId)).data.status == 'Live'
+          && request.resource.data.studentUid == uid
+          && request.resource.data.status == 'Present';
+        allow update, delete: if false;
+      }
+    }
+  }
+}

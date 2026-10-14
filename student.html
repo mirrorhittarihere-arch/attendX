@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10162b">
+  <title>AttendX - Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body data-page="student">
+<section class="student-portal" id="studentPortal">
+  
+<header class="student-topbar">
+  <div class="student-brand">
+    <span class="brand-mark">
+      <i data-lucide="scan-face"></i>
+    </span>
+    <span>
+      Attend<span class="brand-x">X</span>
+      <small>Student portal</small>
+    </span>
+  </div>
+
+  <button
+    class="btn btn-secondary student-logout-btn"
+    id="studentLogoutBtn"
+    type="button"
+    title="Logout"
+  >
+    <i data-lucide="log-out"></i>
+    <span>Logout</span>
+  </button>
+</header>
+
+
+  <main class="student-main">
+    <section class="student-hero">
+      <div class="student-identity">
+        <div class="student-initials-avatar" id="studentHeroInitials">AX</div>
+        <div>
+          <div class="eyebrow">MY ATTENDANCE</div>
+          <h1 id="studentHeroName">Student</h1>
+          <p id="studentHeroMeta">Roll number</p>
+        </div>
+      </div>
+      <div class="student-quick-stats">
+        <div><b id="studentPresentCount">0</b><span>Present</span></div>
+        <div><b id="studentAbsentCount">0</b><span>Absent</span></div>
+        <div><b id="studentAttendanceRate">0%</b><span>Overall</span></div>
+      </div>
+    </section>
+
+    <nav class="student-section-nav" aria-label="Student portal sections">
+      <button class="student-section-tab active" type="button" data-student-section="checkin" aria-current="page"><i data-lucide="scan-line"></i><span>Scan QR</span></button>
+      <button class="student-section-tab" type="button" data-student-section="profile"><i data-lucide="user-round"></i><span>My profile</span></button>
+      <button class="student-section-tab" type="button" data-student-section="sessions"><i data-lucide="radio"></i><span>Live sessions</span></button>
+      <button class="student-section-tab" type="button" data-student-section="records"><i data-lucide="clipboard-check"></i><span>My records</span></button>
+    </nav>
+
+    <section class="student-section active" data-student-view="checkin">
+      <article class="panel student-checkin-card">
+        <div class="panel-heading">
+          <div><h2>Scan attendance QR</h2><p>Use the live session QR shown by your teacher.</p></div>
+          <span class="status-pill status-idle" id="studentCheckinStatus">Ready</span>
+        </div>
+        <div class="scanner-security-note hidden" id="scannerSecurityNote" role="status">
+          <i data-lucide="lock-keyhole"></i>
+          <span>Camera access needs a secure HTTPS link. Open the secure phone link and allow camera permission.</span>
+        </div>
+        <div class="student-session-box" id="studentSessionSummary"></div>
+        <form id="studentCheckinForm" class="form-stack">
+          <label>Session ID or scanned QR payload<input id="studentSessionInput" required placeholder="AX-ABC123"></label>
+          <button class="btn btn-primary btn-full" type="submit"><i data-lucide="user-check"></i> Mark my attendance</button>
+        </form>
+        <div class="student-scanner-frame">
+          <div id="studentReader" class="reader"></div>
+          <div class="scan-placeholder" id="studentScanPlaceholder">
+            <i data-lucide="scan-line"></i>
+            <b>Camera scanner</b>
+            <span>Start camera and scan the teacher's QR code.</span>
+          </div>
+        </div>
+        <div class="student-scan-actions">
+          <span class="status-pill status-idle" id="studentScanStatus">Scanner off</span>
+          <div class="qr-actions">
+            <button class="btn btn-secondary" id="studentStartScannerBtn" type="button"><i data-lucide="camera"></i> Start</button>
+            <button class="btn btn-danger-soft" id="studentStopScannerBtn" type="button"><i data-lucide="camera-off"></i> Stop</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="student-section" data-student-view="profile" hidden>
+      <article class="panel student-profile-card">
+        <div class="panel-heading">
+          <div><h2>My profile</h2><p>Create or update your student details.</p></div>
+        </div>
+        <form id="studentProfileForm" class="form-stack">
+          <label>Full name<input id="studentProfileName" required placeholder="Your full name"></label>
+          <div class="form-row">
+            <label>Roll number<input id="studentProfileRoll" readonly></label>
+            <label>Course<input id="studentProfileCourse" required value="BCA"></label>
+          </div>
+          <div class="form-row">
+            <label>Semester<select id="studentProfileSemester"><option>1st</option><option>2nd</option><option>3rd</option><option selected>4th</option><option>5th</option><option>6th</option></select></label>
+            <label>Email<input id="studentProfileEmail" type="email" placeholder="student@example.com"></label>
+          </div>
+          <button class="btn btn-primary btn-full" type="submit"><i data-lucide="save"></i> Save profile</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="student-section" data-student-view="sessions" hidden>
+      <article class="panel live-list-panel">
+        <div class="panel-heading">
+          <div><h2>Live sessions</h2><p>Tap a session to fill the check-in box.</p></div>
+        </div>
+        <div class="live-session-list student-live-list" id="studentLiveSessions"></div>
+      </article>
+    </section>
+
+    <section class="student-section" data-student-view="records" hidden>
+      <article class="panel">
+        <div class="panel-heading">
+          <div><h2>My records</h2><p>Your personal attendance history.</p></div>
+        </div>
+        <div class="student-record-list" id="studentRecordList"></div>
+      </article>
+    </section>
+  </main>
+</section>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

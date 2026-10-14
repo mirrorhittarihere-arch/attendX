@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10162b">
+  <title>AttendX - Teacher Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body data-page="teacher">
+<div class="app-shell" id="teacherPortal">
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="#">
+      <span class="brand-mark"><i data-lucide="scan-face"></i></span>
+      <span>Attend<span class="brand-x">X</span><small>SMART ATTENDANCE</small></span>
+    </a>
+
+    <div class="workspace">
+      <span class="workspace-icon">M</span>
+      <span><b>MIT Campus</b><small>Academic workspace</small></span>
+      <i data-lucide="chevrons-up-down"></i>
+    </div>
+
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="nav-list">
+      <button class="nav-item active" data-view="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</button>
+      <button class="nav-item" data-view="students"><i data-lucide="users"></i>Students</button>
+      <button class="nav-item" data-view="subjects"><i data-lucide="book-open-check"></i>Subjects</button>
+      <button class="nav-item" data-view="sessions"><i data-lucide="qr-code"></i>QR Sessions</button>
+      <button class="nav-item" data-view="records"><i data-lucide="clipboard-check"></i>Attendance records</button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="profile">
+        <div class="avatar">AX</div>
+        <div class="profile-copy"><b id="profileName">Demo Admin</b><small id="profileRole">Preview mode</small></div>
+        <button id="signOutBtn" class="icon-button" title="Sign out"><i data-lucide="log-out"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-area">
+    <header class="topbar">
+      <button class="icon-button mobile-menu" id="menuBtn"><i data-lucide="menu"></i></button>
+      <div class="breadcrumbs">
+        <span>Workspace</span>
+        <i data-lucide="chevron-right"></i>
+        <b id="breadcrumbTitle">Dashboard</b>
+      </div>
+      <div class="topbar-actions">
+        <span class="live-indicator"><span></span> System operational</span>
+        <button class="btn btn-secondary top-logout-btn" id="topSignOutBtn"><i data-lucide="log-out"></i> Logout</button>
+        <div class="top-avatar">AX</div>
+      </div>
+    </header>
+
+    <div class="content-area">
+      <section class="view active" id="view-dashboard">
+        <div class="page-heading">
+          <div>
+            <div class="eyebrow">OVERVIEW <span id="todayLabel"></span></div>
+            <h1>Good day, <span id="greetingName">Admin</span> <span class="wave">*</span></h1>
+            <p>Here's what's happening with attendance today.</p>
+          </div>
+          <button class="btn btn-primary" data-view="sessions"><i data-lucide="plus"></i> Start a session</button>
+        </div>
+
+        <div class="notice" id="demoNotice">
+          <i data-lucide="info"></i>
+          <div>
+            <b>You're viewing the interactive demo</b>
+            <span>Sample data is stored in this browser. Teacher and student portals are separate in this demo.</span>
+          </div>
+          <button class="notice-close" id="closeNotice"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="stats-grid">
+          <article class="stat-card">
+            <div class="stat-top"><span>Total students</span><span class="stat-icon purple"><i data-lucide="users"></i></span></div>
+            <div class="stat-value" id="statStudents">0</div>
+            <div class="stat-foot"><span class="trend positive"><i data-lucide="trending-up"></i> Active roster</span><span>Registered students</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Present today</span><span class="stat-icon green"><i data-lucide="user-check"></i></span></div>
+            <div class="stat-value" id="statPresent">0</div>
+            <div class="stat-foot"><span class="trend positive"><i data-lucide="check"></i> Checked in</span><span id="presentRate">0% of roster</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Absent today</span><span class="stat-icon amber"><i data-lucide="user-round-clock"></i></span></div>
+            <div class="stat-value" id="statAbsent">0</div>
+            <div class="stat-foot"><span class="trend neutral"><i data-lucide="clock-3"></i> Finalized</span><span>After sessions close</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Sessions held</span><span class="stat-icon blue"><i data-lucide="calendar-check"></i></span></div>
+            <div class="stat-value" id="statSessions">00</div>
+            <div class="stat-foot"><span class="trend positive"><i data-lucide="activity"></i> This week</span><span>Across all subjects</span></div>
+          </article>
+        </div>
+
+        <div class="dashboard-grid">
+          <article class="panel attendance-panel">
+            <div class="panel-heading">
+              <div><h2>Attendance overview</h2><p>Daily attendance snapshot</p></div>
+              <span class="select-wrap"><select id="chartRange"><option value="week">This week</option><option value="month">This month</option></select><i data-lucide="chevron-down"></i></span>
+            </div>
+            <div class="chart-summary">
+              <div><span class="chart-number" id="chartRate">0%</span><span class="chart-caption">Average attendance</span></div>
+              <span class="trend positive"><i data-lucide="trending-up"></i> On track</span>
+            </div>
+            <div class="bar-chart" id="barChart" aria-label="Attendance by day"></div>
+            <div class="chart-legend"><span><i class="legend-dot"></i> Attendance rate</span><span>Target: 85%</span></div>
+          </article>
+
+          <article class="panel sessions-panel">
+            <div class="panel-heading">
+              <div><h2>Recent sessions</h2><p>Latest classroom activity</p></div>
+              <button class="text-button" data-view="sessions">View all <i data-lucide="arrow-right"></i></button>
+            </div>
+            <div class="recent-list" id="recentSessions"></div>
+          </article>
+        </div>
+
+        <article class="panel table-panel">
+          <div class="panel-heading">
+            <div><h2>Recent attendance</h2><p>Latest student check-ins</p></div>
+            <button class="text-button" data-view="records">All records <i data-lucide="arrow-right"></i></button>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>STUDENT</th><th>SUBJECT</th><th>DATE & TIME</th><th>STATUS</th></tr></thead>
+              <tbody id="recentRecords"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="view-students">
+        <div class="page-heading">
+          <div><div class="eyebrow">DIRECTORY</div><h1>Students</h1><p>Manage the student roster and profile details.</p></div>
+          <button class="btn btn-primary" id="addStudentBtn"><i data-lucide="user-plus"></i> Add student</button>
+        </div>
+        <article class="panel">
+          <div class="toolbar">
+            <div class="search-box"><i data-lucide="search"></i><input id="studentSearch" placeholder="Search name, roll number or course..."></div>
+            <label class="filter-select"><span>Course</span><select id="studentCourseFilter"><option value="all">All courses</option></select></label>
+            <label class="filter-select"><span>Semester</span><select id="studentSemesterFilter"><option value="all">All semesters</option></select></label>
+            <span class="muted" id="studentCount">0 students</span>
+          </div>
+          <div class="student-directory">
+            <div class="student-list" id="studentsTable" aria-label="Student list"></div>
+            <article class="student-detail panel hidden" id="studentDetail" aria-live="polite"></article>
+          </div>
+          <div class="empty-state hidden" id="studentEmpty">No students match these filters. Try a different search or add a student.</div>
+        </article>
+      </section>
+
+      <section class="view" id="view-subjects">
+        <div class="page-heading">
+          <div><div class="eyebrow">ACADEMIC PLAN</div><h1>Subjects & teachers</h1><p>Manage your subjects and assigned faculty members.</p></div>
+          <button class="btn btn-primary" id="addSubjectBtn" type="button"><i data-lucide="plus"></i> Add subject</button>
+        </div>
+        <div class="subject-grid" id="subjectGrid"></div>
+      </section>
+
+      <section class="view" id="view-sessions">
+        <div class="page-heading">
+          <div><div class="eyebrow">LIVE CLASSROOM</div><h1>QR Sessions</h1><p>Create a classroom session and let students check in.</p></div>
+          <button class="btn btn-primary" id="newSessionBtn"><i data-lucide="plus"></i> New QR session</button>
+        </div>
+
+        <div class="session-layout">
+          <article class="panel session-create">
+            <div class="panel-heading">
+              <div><h2>Session control</h2><p>Generate a unique QR for your class.</p></div>
+              <span class="status-pill status-idle" id="sessionStatus">No active session</span>
+            </div>
+            <form id="sessionForm" class="form-stack">
+              <label>Subject<select id="sessionSubject" required><option value="">Select a subject</option></select></label>
+              <div class="form-row">
+                <label>Class / section<input id="sessionClass" required value="BCA - Section A"></label>
+                <label>QR validity<select id="sessionExpiry"><option value="2">2 minutes</option><option value="5" selected>5 minutes</option><option value="10">10 minutes</option><option value="15">15 minutes</option></select></label>
+              </div>
+              <button class="btn btn-primary btn-full" id="createSessionBtn" type="submit"><i data-lucide="qr-code"></i> Generate QR session</button>
+            </form>
+            <button class="text-button" type="button" data-view="subjects">Manage subjects <i data-lucide="arrow-right"></i></button>
+            <div class="session-tip"><i data-lucide="shield-check"></i><span>For a real deployment, validate session expiry and student identity on the server/database rules.</span></div>
+          </article>
+
+          <article class="panel qr-panel">
+            <div class="qr-placeholder" id="qrPlaceholder">
+              <div class="qr-placeholder-icon"><i data-lucide="scan-qr-code"></i></div>
+              <h3>Your QR appears here</h3>
+              <p>Create a session to generate a scannable code.</p>
+            </div>
+            <div class="qr-live hidden" id="qrLive">
+              <div class="qr-heading"><span class="live-pill"><span></span> LIVE SESSION</span><span class="qr-countdown" id="qrCountdown">05:00</span></div>
+              <h2 id="qrSubjectTitle">Subject</h2>
+              <p id="qrClassTitle">BCA - Section A</p>
+              <div id="qrcode" class="qr-code-box"></div>
+              <div class="qr-session-id">SESSION ID <b id="qrSessionId">AX-000000</b><button id="copySessionId" class="icon-button" title="Copy session ID"><i data-lucide="copy"></i></button></div>
+              <div class="qr-actions">
+                <button class="btn btn-secondary" id="downloadQrBtn"><i data-lucide="download"></i> Download QR</button>
+                <button class="btn btn-danger-soft" id="endSessionBtn"><i data-lucide="square"></i> End session</button>
+              </div>
+              <div class="qr-footnote" id="qrFootnote">Demo mode: scan code to preview session details.</div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel table-panel">
+          <div class="panel-heading">
+            <div><h2>Session history</h2><p>Previously created attendance sessions.</p></div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>SESSION</th><th>SUBJECT</th><th>DATE</th><th>CHECK-INS</th><th>STATUS</th><th>ACTION</th></tr></thead>
+              <tbody id="sessionsTable"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="view" id="view-records">
+        <div class="page-heading">
+          <div><div class="eyebrow">AUDIT TRAIL</div><h1>Attendance records</h1><p>Review check-ins and export a report for your records.</p></div>
+          <button class="btn btn-primary" id="exportCsvBtn"><i data-lucide="download"></i> Export CSV</button>
+        </div>
+        <article class="panel">
+          <div class="toolbar">
+            <div class="search-box"><i data-lucide="search"></i><input id="recordSearch" placeholder="Search student or subject..."></div>
+            <label class="filter-select"><span>Status</span><select id="recordStatus"><option value="all">All statuses</option><option value="Present">Present</option><option value="Absent">Absent</option></select></label>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>STUDENT</th><th>ROLL NUMBER</th><th>SUBJECT</th><th>DATE & TIME</th><th>STATUS</th></tr></thead>
+              <tbody id="recordsTable"></tbody>
+            </table>
+          </div>
+          <div class="empty-state hidden" id="recordsEmpty">No attendance records match these filters.</div>
+        </article>
+      </section>
+
+      <section class="view" id="view-settings">
+        <div class="page-heading">
+          <div><div class="eyebrow">CONFIGURATION</div><h1>Setup & settings</h1><p>Connect Firebase when you're ready to sync data online.</p></div>
+          <span class="status-pill status-idle" id="firebaseStatus">Demo mode</span>
+        </div>
+        <article class="panel setup-panel">
+          <div class="setup-icon"><i data-lucide="cloud-cog"></i></div>
+          <h2>Connect your Firebase project</h2>
+          <p class="setup-lead">The current app runs in demo mode with sample data saved locally in your browser. Follow these steps to connect a free Firebase project.</p>
+          <ol class="setup-steps">
+            <li><b>Create a project</b><span>Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noreferrer">Firebase Console</a> and create a project.</span></li>
+            <li><b>Register a web app</b><span>In Project settings, add a web app and copy the Firebase configuration object.</span></li>
+            <li><b>Enable Authentication</b><span>Under Authentication - Sign-in method, enable Email/Password.</span></li>
+            <li><b>Create Firestore Database</b><span>Open Firestore Database and create a database. For a real app, deploy restrictive security rules.</span></li>
+            <li><b>Cloud integration status</b><span>Firebase is not connected in this prototype. Replacing config values or switching <code>USE_FIREBASE</code> on will not enable cloud mode; the Firebase SDK and auth/data services must first be implemented and tested.</span></li>
+          </ol>
+          <div class="warning-box"><i data-lucide="shield-alert"></i><div><b>Security note</b><p>Never deploy open Firestore rules. Client-side QR expiry is not sufficient for secure attendance; validate roles, session expiry and duplicate check-ins with trusted rules or a server-side function.</p></div></div>
+          <div class="setup-actions">
+            <a class="btn btn-secondary" href="https://firebase.google.com/pricing" target="_blank" rel="noreferrer"><i data-lucide="external-link"></i> View Firebase pricing</a>
+            <button class="btn btn-primary" id="resetDemoBtn"><i data-lucide="rotate-ccw"></i> Reset demo data</button>
+          </div>
+        </article>
+
+        <article class="panel team-panel">
+          <div class="panel-heading"><div><h2>Team responsibilities</h2><p>Suggested split for a three-person college team.</p></div></div>
+          <div class="team-grid">
+            <div class="team-card"><span class="team-number">01</span><b>Frontend & UI</b><p>HTML layout, responsive CSS, dashboard cards, tables and design system.</p></div>
+            <div class="team-card"><span class="team-number">02</span><b>JavaScript & QR</b><p>Navigation, QR generation/scanning, validation, session countdown and CSV export.</p></div>
+            <div class="team-card"><span class="team-number">03</span><b>Firebase & testing</b><p>Authentication plan, Firestore structure, sample data, testing and project documentation.</p></div>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <footer class="footer"><span>(c) 2026 AttendX</span><span>Built for smarter classrooms <i data-lucide="heart-handshake"></i></span></footer>
+  </main>
+</div>
+
+<div class="modal-backdrop hidden" id="studentModal">
+  <div class="modal">
+    <div class="modal-heading">
+      <div><h2 id="studentModalTitle">Add student</h2><p>Enter student details below.</p></div>
+      <button class="icon-button" id="closeStudentModal"><i data-lucide="x"></i></button>
+    </div>
+    <form id="studentForm" class="form-stack">
+      <input type="hidden" id="editStudentId">
+      <label>Full name<input id="studentName" required placeholder="e.g. Aditi Sharma"></label>
+      <div class="form-row">
+        <label>Roll number<input id="studentRoll" required placeholder="e.g. BCA2401"></label>
+        <label>Course<input id="studentCourse" required value="BCA"></label>
+      </div>
+      <div class="form-row">
+        <label>Semester<select id="studentSemester"><option>1st</option><option>2nd</option><option>3rd</option><option selected>4th</option><option>5th</option><option>6th</option></select></label>
+        <label>Email<input id="studentEmail" type="email" placeholder="student@example.com"></label>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="cancelStudentBtn">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save student</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="subjectModal">
+  <div class="modal">
+    <div class="modal-heading">
+      <div><h2 id="subjectModalTitle">Add subject</h2><p>Enter subject and faculty details below.</p></div>
+      <button class="icon-button" id="closeSubjectModal" type="button" aria-label="Close"><i data-lucide="x"></i></button>
+    </div>
+    <form id="subjectForm" class="form-stack">
+      <input type="hidden" id="editSubjectId">
+      <label>Subject name<input id="subjectName" required maxlength="100" placeholder="e.g. Database Management Systems"></label>
+      <div class="form-row">
+        <label>Subject code<input id="subjectCode" required maxlength="30" placeholder="e.g. BCA-401"></label>
+        <label>Teacher<input id="subjectTeacher" maxlength="100" placeholder="e.g. Dr. Meera Sharma"></label>
+      </div>
+      <label>Description<textarea id="subjectDescription" rows="3" maxlength="240" placeholder="Briefly describe this subject"></textarea></label>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" type="button" id="cancelSubjectBtn">Cancel</button>
+        <button class="btn btn-primary" type="submit">Save subject</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
